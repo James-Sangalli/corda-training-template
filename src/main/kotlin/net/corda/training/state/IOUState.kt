@@ -23,7 +23,10 @@ data class IOUState(val amount : Amount<Currency>,
                     override val linearId: UniqueIdentifier = UniqueIdentifier()): ContractState, LinearState {
 
     override fun isRelevant(ourKeys: Set<PublicKey>): Boolean {
-        return false
+        //check if either lender or borrower is in the set of keys, if so return true and vice versa
+        return ourKeys
+                .filterIndexed { index, key -> ourKeys.contains(participants.elementAt(index).owningKey) }
+                .any()
     }
 
     override val participants: List<AbstractParty> get() = listOf(lender, borrower)
@@ -33,4 +36,14 @@ data class IOUState(val amount : Amount<Currency>,
      * **Don't change this definition!**
      */
     override val contract get() = IOUContract()
+
+    //must recreate the state with paid amended as states are immutable
+    //Kotlin is very vague on this... haha
+    fun pay(amountToPay: Amount<Currency>) = copy(paid = paid.plus(amountToPay))
+
+    /**
+     * A toString() helper method for displaying IOUs in the console.
+     */
+    override fun toString() = "IOU($linearId): ${borrower.name} owes ${lender.name} $amount and has paid $paid so far."
+
 }

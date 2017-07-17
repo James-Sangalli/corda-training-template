@@ -149,11 +149,11 @@ class IOUStateTests {
      * You can use the [participants.keys] method to get a list of all the [CompositeKeys].
      * You can use [isNotEmpty] to check the intersection of the sets is not empty!
      */
-//    @Test
-//    fun isRelevantMethodComplete() {
-//        val iouState = IOUState(1.POUNDS, ALICE, BOB)
-//        assert(iouState.isRelevant(setOf(ALICE_PUBKEY, BOB_PUBKEY)))
-//    }
+    @Test
+    fun isRelevantMethodComplete() {
+        val iouState = IOUState(1.POUNDS, ALICE, BOB)
+        assert(iouState.isRelevant(setOf(ALICE_PUBKEY, BOB_PUBKEY)))
+    }
 
     /**
      * Task 10.
@@ -194,22 +194,22 @@ class IOUStateTests {
      *
      * The name string name of a party can be obtained from the following property [Party.name].
      */
-//    @Test
-//    fun checkIOUStateToStringMethod() {
-//        val iouState = IOUState(1.POUNDS, ALICE, BOB)
-//        assertEquals(iouState.toString(), "IOU(${iouState.linearId}): CN=Bob Plc,O=Bob Plc,L=Rome,C=IT owes CN=Alice Corp,O=Alice Corp,L=Madrid,C=ES 1.00 GBP and has paid 0.00 GBP so far.")
-//    }
+    @Test
+    fun checkIOUStateToStringMethod() {
+        val iouState = IOUState(1.POUNDS, ALICE, BOB)
+        assertEquals(iouState.toString(), "IOU(${iouState.linearId}): CN=Bob Plc,O=Bob Plc,L=Rome,C=IT owes CN=Alice Corp,O=Alice Corp,L=Madrid,C=ES 1.00 GBP and has paid 0.00 GBP so far.")
+    }
 
     /**
      * Task 12.
      * TODO: Add a helper method called [pay] that can be called from an [IOUState] to settle an amount of the IOU.
      * Hint: You will need to increase the [IOUState.paid] property by the amount the borrower wishes to pay.
      */
-//    @Test
-//    fun checkPayHelperMethod() {
-//        val iou = IOUState(10.DOLLARS, ALICE, BOB)
-//        assertEquals(5.DOLLARS, iou.pay(5.DOLLARS).paid)
-//        assertEquals(3.DOLLARS, iou.pay(1.DOLLARS).pay(2.DOLLARS).paid)
-//        assertEquals(10.DOLLARS, iou.pay(5.DOLLARS).pay(3.DOLLARS).pay(2.DOLLARS).paid)
-//    }
+    @Test
+    fun checkPayHelperMethod() {
+        val iou = IOUState(10.DOLLARS, ALICE, BOB)
+        assertEquals(5.DOLLARS, iou.pay(5.DOLLARS).paid)
+        assertEquals(3.DOLLARS, iou.pay(1.DOLLARS).pay(2.DOLLARS).paid)
+        assertEquals(10.DOLLARS, iou.pay(5.DOLLARS).pay(3.DOLLARS).pay(2.DOLLARS).paid)
+    }
 }
