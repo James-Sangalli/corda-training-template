@@ -17,7 +17,9 @@ import java.util.*
  *
  * Remove the "val data: String = "data" property before starting the [IOUState] tasks.
  */
-data class IOUState(val data: String = "data"): ContractState {
+data class IOUState(val amount : Amount<Currency>, val lender : Party,
+                    val borrower : Party, val paid : Amount<Currency> = Amount(0, amount.token)): ContractState
+{
     override val participants: List<AbstractParty> get() = listOf()
 
     /**
