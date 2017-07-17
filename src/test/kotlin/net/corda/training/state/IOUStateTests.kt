@@ -90,11 +90,11 @@ class IOUStateTests {
      * Hint: Note that [IOUState.participants] list is a list of [CompositeKey]s. [Party] or [AnonymousParty] objects
      * include a property which contains their [CompositeKey] called [Party.owningKey]
      */
-//    @Test
-//    fun lenderIsParticipant() {
-//        val iouState = IOUState(1.POUNDS, ALICE, BOB)
-//        assertNotEquals(iouState.participants.indexOf(ALICE), -1)
-//    }
+    @Test
+    fun lenderIsParticipant() {
+        val iouState = IOUState(1.POUNDS, ALICE, BOB)
+        assertNotEquals(iouState.participants.indexOf(ALICE), -1)
+    }
 
     /**
      * Task 6.
@@ -102,11 +102,11 @@ class IOUStateTests {
      * Hint: Note that [IOUState.participants] list is a list of [CompositeKey]s. [AnonymousParty] objects include a
      * property which contains their [CompositeKey] called [Party.owningKey]
      */
-//    @Test
-//    fun borrowerIsParticipant() {
-//        val iouState = IOUState(1.POUNDS, ALICE, BOB)
-//        assertNotEquals(iouState.participants.indexOf(BOB), -1)
-//    }
+    @Test
+    fun borrowerIsParticipant() {
+        val iouState = IOUState(1.POUNDS, ALICE, BOB)
+        assertNotEquals(iouState.participants.indexOf(BOB), -1)
+    }
 
     /**
      * Task 7.
