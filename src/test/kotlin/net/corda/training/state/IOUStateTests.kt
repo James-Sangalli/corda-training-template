@@ -115,10 +115,10 @@ class IOUStateTests {
      * IntellIJ to automatically add the member definitions for you or you can add them yourself. Look at the definition
      * of [LinearState] for what requires adding.
      */
-//    @Test
-//    fun isLinearState() {
-//        assert(LinearState::class.java.isAssignableFrom(IOUState::class.java))
-//    }
+    @Test
+    fun isLinearState() {
+        assert(LinearState::class.java.isAssignableFrom(IOUState::class.java))
+    }
 
     /**
      * Task 8.
@@ -129,13 +129,13 @@ class IOUStateTests {
      * agreement at a specific point in time) together. All the [LinearState]s with the same [LinearState.linearId]
      * represent the complete life-cycle to date of an agreement, asset or shared fact.
      */
-//    @Test
-//    fun hasLinearIdFieldOfCorrectType() {
-//        // Does the linearId field exist?
-//        IOUState::class.java.getDeclaredField("linearId")
-//        // Is the paid field of the correct type?
-//        assertEquals(IOUState::class.java.getDeclaredField("linearId").type, UniqueIdentifier::class.java)
-//    }
+    @Test
+    fun hasLinearIdFieldOfCorrectType() {
+        // Does the linearId field exist?
+        IOUState::class.java.getDeclaredField("linearId")
+        // Is the paid field of the correct type?
+        assertEquals(IOUState::class.java.getDeclaredField("linearId").type, UniqueIdentifier::class.java)
+    }
 
     /**
      * Task 9.
