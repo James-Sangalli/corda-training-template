@@ -46,4 +46,5 @@ data class IOUState(val amount : Amount<Currency>,
      */
     override fun toString() = "IOU($linearId): ${borrower.name} owes ${lender.name} $amount and has paid $paid so far."
 
+    fun withNewLender(newLender : Party) = copy(lender = newLender)
 }
