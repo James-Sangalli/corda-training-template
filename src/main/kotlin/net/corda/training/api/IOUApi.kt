@@ -6,6 +6,8 @@ import net.corda.core.contracts.Amount
 import net.corda.core.contracts.ContractState
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.contracts.UniqueIdentifier
+import net.corda.core.flows.FlowLogic
+import net.corda.core.identity.Party
 import net.corda.core.messaging.CordaRPCOps
 import net.corda.core.utilities.loggerFor
 import net.corda.training.flow.IOUIssueFlow
@@ -16,10 +18,7 @@ import net.corda.training.state.IOUState
 import org.bouncycastle.asn1.x500.X500Name
 import org.slf4j.Logger
 import java.util.*
-import javax.ws.rs.GET
-import javax.ws.rs.Path
-import javax.ws.rs.Produces
-import javax.ws.rs.QueryParam
+import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
@@ -73,6 +72,14 @@ class IOUApi(val services: CordaRPCOps) {
         return vaultInfo.filter { it.state.data is IOUState }
     }
 
+    //Returns all of the nodes active states
+    @GET
+    @Path("ious/getActiveStates")
+    fun getActiveStates() : List<StateAndRef<ContractState>>
+    {
+        return services.vaultAndUpdates().first
+    }
+
     /**
      * Displays all cash states that exist in the node's vault.
      */
@@ -106,27 +113,27 @@ class IOUApi(val services: CordaRPCOps) {
 
 //        UNCOMMENT THIS CODE BEFORE USING THE API!
 //        -----------------------------------------
-//
-//        // Get party objects for myself and the counterparty.
-//        val me = services.nodeIdentity().legalIdentity
-//        val lender = services.partyFromName(party) ?: throw IllegalArgumentException("Unknown party name.")
-//        // Create a new IOU state using the parameters given.
-//        val state = IOUState(Amount(amount.toLong() * 100, Currency.getInstance(currency)), lender, me)
-//        // Start the IOUIssueFlow. We block and waits for the flow to return.
-//        try {
-//            val result = services.startFlowDynamic(IOUIssueFlow::class.java, state, lender).returnValue.get()
-//            // Return the response.
-//            return Response
-//                    .status(Response.Status.CREATED)
-//                    .entity("Transaction id ${result.id} committed to ledger.\n${result.tx.outputs.single()}")
-//                    .build()
-//            // For the purposes of this demo app, we do not differentiate by exception type.
-//        } catch (e: Exception) {
-//            return Response
-//                    .status(Response.Status.BAD_REQUEST)
-//                    .entity(e.message)
-//                    .build()
-//        }
+
+        // Get party objects for myself and the counterparty.
+        val me = services.nodeIdentity().legalIdentity
+        val lender = services.partyFromName(party) ?: throw IllegalArgumentException("Unknown party name.")
+        // Create a new IOU state using the parameters given.
+        val state = IOUState(Amount(amount.toLong() * 100, Currency.getInstance(currency)), lender, me)
+        // Start the IOUIssueFlow. We block and waits for the flow to return.
+        try {
+            val result = services.startFlowDynamic(IOUIssueFlow::class.java, state, lender).returnValue.get()
+            // Return the response.
+            return Response
+                    .status(Response.Status.CREATED)
+                    .entity("Transaction id ${result.id} committed to ledger.\n${result.tx.outputs.single()}")
+                    .build()
+            // For the purposes of this demo app, we do not differentiate by exception type.
+        } catch (e: Exception) {
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .entity(e.message)
+                    .build()
+        }
 
 
         // Placeholder, remove.
@@ -197,4 +204,26 @@ class IOUApi(val services: CordaRPCOps) {
                     .build()
         }
     }
+
+    @PUT
+    @Path("issue-iou/createIssue")
+    fun createIssue(@PathParam("amount") amount: Int,
+                    @PathParam("currency") currency: String,
+                    @PathParam("party") party : String) : Response
+    {
+        val responseArray = arrayListOf<Any>(amount, currency, party)
+        //CordaRPCOps seems to be replaced with services
+        val nodeId = services.nodeIdentity().legalIdentity
+        val counterpartyId = services.partyFromName(party) as Party
+        val amt = Amount(amount.toLong() * 100, Currency.getInstance(currency))
+        //create an IOU state
+        val newIOUState = IOUState(amt, counterpartyId, nodeId)
+
+        val result = services.startFlowDynamic(IOUIssueFlow::class.java,
+                newIOUState, counterpartyId).returnValue.get()
+
+        return Response.status(Response.Status.CREATED).entity("tx id: " +
+                "${result.id} sent to counterparty").build()
+    }
+
 }
