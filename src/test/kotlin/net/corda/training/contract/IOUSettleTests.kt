@@ -123,37 +123,37 @@ class IOUSettleTests {
      * There always has to be one input IOU ina settle transaction but there might not be an output IOU.
      * TODO: Add a constraint to check there is always one input IOU.
      */
-//    @Test
-//    fun mustHaveOneInputIOU() {
-//        val iou = IOUState(10.POUNDS, ALICE, BOB)
-//        val iouOne = IOUState(10.POUNDS, ALICE, BOB)
-//        val tenPounds = createCashState(10.POUNDS, BOB)
-//        val fivePounds = createCashState(5.POUNDS, BOB)
-//        ledger {
-//            transaction {
-//                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Settle() }
-//                output { iou }
-//                this `fails with` "There must be one input IOU."
-//            }
-//            transaction {
-//                input { iouOne }
-//                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Settle() }
-//                output { iouOne.pay(5.POUNDS) }
-//                input { fivePounds }
-//                output { fivePounds.withNewOwner(newOwner = ALICE).second }
-//                command(BOB_PUBKEY) { Cash.Commands.Move() }
-//                this.verifies()
-//            }
-//            transaction {
-//                input { iouOne }
-//                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Settle() }
-//                input { tenPounds }
-//                output { tenPounds.withNewOwner(newOwner = ALICE).second }
-//                command(BOB_PUBKEY) { Cash.Commands.Move() }
-//                this.verifies()
-//            }
-//        }
-//    }
+    @Test
+    fun mustHaveOneInputIOU() {
+        val iou = IOUState(10.POUNDS, ALICE, BOB)
+        val iouOne = IOUState(10.POUNDS, ALICE, BOB)
+        val tenPounds = createCashState(10.POUNDS, BOB)
+        val fivePounds = createCashState(5.POUNDS, BOB)
+        ledger {
+            transaction {
+                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Settle() }
+                output { iou }
+                this `fails with` "There must be one input IOU."
+            }
+            transaction {
+                input { iouOne }
+                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Settle() }
+                output { iouOne.pay(5.POUNDS) }
+                input { fivePounds }
+                output { fivePounds.withNewOwner(newOwner = ALICE).second }
+                command(BOB_PUBKEY) { Cash.Commands.Move() }
+                this.verifies()
+            }
+            transaction {
+                input { iouOne }
+                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Settle() }
+                input { tenPounds }
+                output { tenPounds.withNewOwner(newOwner = ALICE).second }
+                command(BOB_PUBKEY) { Cash.Commands.Move() }
+                this.verifies()
+            }
+        }
+    }
 
     /**
      * Task 4.

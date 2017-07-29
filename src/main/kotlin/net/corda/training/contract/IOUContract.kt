@@ -73,6 +73,7 @@ class IOUContract : Contract {
 
             is Commands.Settle -> requireThat {
                "List has more than one element." using ( tx.groupStates<IOUState, Any> { it.linearId }.size == 1 )
+                "There must be one input IOU." using (tx.inputs.size >= 1)
             }
         }
 
