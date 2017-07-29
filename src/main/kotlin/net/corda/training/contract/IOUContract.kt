@@ -24,6 +24,7 @@ class IOUContract : Contract {
     {
         class Issue : TypeOnlyCommandData(), Commands
         class Transfer : TypeOnlyCommandData(), Commands
+        class Settle : TypeOnlyCommandData(), Commands
     }
 
     /**
@@ -69,8 +70,11 @@ class IOUContract : Contract {
                         keysThatSigned == keysThatShouldSign.map { it.owningKey }.toSet()
                 )
             }
-        }
 
+            is Commands.Settle -> requireThat {
+               "List has more than one element." using ( tx.groupStates<IOUState, Any> { it.linearId }.size == 1 )
+            }
+        }
 
     }
 

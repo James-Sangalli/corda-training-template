@@ -37,45 +37,45 @@ class IOUSettleTests {
      * TODO: Add the [IOUContract.Commands.Settle] case to the verify function.
      * Hint: You can leave the body empty for now.
      */
-//    @Test
-//    fun mustIncludeSettleCommand() {
-//        val iou = IOUState(10.POUNDS, ALICE, BOB)
-//        val inputCash = createCashState(5.POUNDS, BOB)
-//        val outputCash = inputCash.withNewOwner(newOwner = ALICE).second
-//        ledger {
-//            transaction {
-//                input { iou }
-//                output { iou.pay(5.POUNDS) }
-//                input { inputCash }
-//                output { outputCash }
-//                command(BOB_PUBKEY) { Cash.Commands.Move() }
-//                this.fails()
-//            }
-//            transaction {
-//                input { iou }
-//                output { iou.pay(5.POUNDS) }
-//                input { inputCash }
-//                output { outputCash }
-//                command(BOB_PUBKEY) { Cash.Commands.Move() }
-//                command(ALICE_PUBKEY, BOB_PUBKEY) { DummyCommand() } // Wrong type.
-//                this.fails()
-//            }
-//            transaction {
-//                input { iou }
-//                output { iou.pay(5.POUNDS) }
-//                input { inputCash }
-//                output { outputCash }
-//                command(BOB_PUBKEY) { Cash.Commands.Move() }
-//                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Settle() } // Correct Type.
-//                this.verifies()
-//            }
-//        }
-//    }
+    @Test
+    fun mustIncludeSettleCommand() {
+        val iou = IOUState(10.POUNDS, ALICE, BOB)
+        val inputCash = createCashState(5.POUNDS, BOB)
+        val outputCash = inputCash.withNewOwner(newOwner = ALICE).second
+        ledger {
+            transaction {
+                input { iou }
+                output { iou.pay(5.POUNDS) }
+                input { inputCash }
+                output { outputCash }
+                command(BOB_PUBKEY) { Cash.Commands.Move() }
+                this.fails()
+            }
+            transaction {
+                input { iou }
+                output { iou.pay(5.POUNDS) }
+                input { inputCash }
+                output { outputCash }
+                command(BOB_PUBKEY) { Cash.Commands.Move() }
+                command(ALICE_PUBKEY, BOB_PUBKEY) { DummyCommand() } // Wrong type.
+                this.fails()
+            }
+            transaction {
+                input { iou }
+                output { iou.pay(5.POUNDS) }
+                input { inputCash }
+                output { outputCash }
+                command(BOB_PUBKEY) { Cash.Commands.Move() }
+                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Settle() } // Correct Type.
+                this.verifies()
+            }
+        }
+    }
 
     /**
      * Task 2.
      * For now, we only want to settle one IOU at once. We can use the [TransactionForContract.groupStates] function
-     * to group the IOUs by their [lienarId] property. We want to make sure there is only one group of input and output
+     * to group the IOUs by their [linearId] property. We want to make sure there is only one group of input and output
      * IOUs.
      * TODO: Using [groupStates] add a constraint that checks for one group of input/output IOUs.
      * Hint:
@@ -89,34 +89,34 @@ class IOUSettleTests {
      *
      *   This is exactly how map / filter are used in Kotlin.
      */
-//    @Test
-//    fun mustBeOneGroupOfIOUs() {
-//        val iouOne = IOUState(10.POUNDS, ALICE, BOB)
-//        val iouTwo = IOUState(5.POUNDS, ALICE, BOB)
-//        val inputCash = createCashState(5.POUNDS, BOB)
-//        val outputCash = inputCash.withNewOwner(newOwner = ALICE).second
-//        ledger {
-//            transaction {
-//                input { iouOne }
-//                input { iouTwo }
-//                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Settle() }
-//                output { iouOne.pay(5.POUNDS) }
-//                input { inputCash }
-//                output { outputCash }
-//                command(BOB_PUBKEY) { Cash.Commands.Move() }
-//                this `fails with` "List has more than one element."
-//            }
-//            transaction {
-//                input { iouOne }
-//                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Settle() }
-//                output { iouOne.pay(5.POUNDS) }
-//                input { inputCash }
-//                output { outputCash }
-//                command(BOB_PUBKEY) { Cash.Commands.Move() }
-//                this.verifies()
-//            }
-//        }
-//    }
+    @Test
+    fun mustBeOneGroupOfIOUs() {
+        val iouOne = IOUState(10.POUNDS, ALICE, BOB)
+        val iouTwo = IOUState(5.POUNDS, ALICE, BOB)
+        val inputCash = createCashState(5.POUNDS, BOB)
+        val outputCash = inputCash.withNewOwner(newOwner = ALICE).second
+        ledger {
+            transaction {
+                input { iouOne }
+                input { iouTwo }
+                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Settle() }
+                output { iouOne.pay(5.POUNDS) }
+                input { inputCash }
+                output { outputCash }
+                command(BOB_PUBKEY) { Cash.Commands.Move() }
+                this `fails with` "List has more than one element."
+            }
+            transaction {
+                input { iouOne }
+                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Settle() }
+                output { iouOne.pay(5.POUNDS) }
+                input { inputCash }
+                output { outputCash }
+                command(BOB_PUBKEY) { Cash.Commands.Move() }
+                this.verifies()
+            }
+        }
+    }
 
     /**
      * Task 3.
