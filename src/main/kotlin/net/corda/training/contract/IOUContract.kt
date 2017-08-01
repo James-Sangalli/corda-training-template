@@ -1,5 +1,7 @@
 package net.corda.training.contract
 
+import net.corda.contracts.asset.Cash
+import net.corda.contracts.asset.sumCash
 import net.corda.core.contracts.*
 import net.corda.core.crypto.SecureHash
 import net.corda.core.identity.Party
@@ -73,7 +75,17 @@ class IOUContract : Contract {
 
             is Commands.Settle -> requireThat {
                "List has more than one element." using ( tx.groupStates<IOUState, Any> { it.linearId }.size == 1 )
-                "There must be one input IOU." using (tx.inputs.size >= 1)
+                "There must be one input IOU." using (tx.inputs.isNotEmpty())
+                "There must be output cash." using(tx.outputs.filterIsInstance<Cash.State>().isNotEmpty())
+                //get recipient and compare it to the output cash state owner
+                "There must be output cash paid to the recipient." using (tx.outputs.first().participants.get(0).owningKey ==
+                    tx.outputs.filterIsInstance<Cash.State>().get(0).owner.owningKey
+                )
+                "The amount settled cannot be more than the amount outstanding." using (
+                        tx.outputs.filterIsInstance<Cash.State>().sumCash().quantity <=
+                                tx.inputs.filterIsInstance<Cash.State>().sumCash().quantity
+                )
+
             }
         }
 

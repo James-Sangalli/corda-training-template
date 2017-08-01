@@ -164,68 +164,68 @@ class IOUSettleTests {
      * Hint:
      * - Use the [filterIsInstance] extension function to filter the outputs list by type, in this case [Cash.State].
      */
-//    @Test
-//    fun mustBeCashOutputStatesPresent() {
-//        val iou = IOUState(10.DOLLARS, ALICE, BOB)
-//        val cash = createCashState(5.DOLLARS, BOB)
-//        val cashPayment = cash.withNewOwner(newOwner = ALICE)
-//        ledger {
-//            transaction {
-//                input { iou }
-//                output { iou.pay(5.DOLLARS) }
-//                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Settle() }
-//                this `fails with` "There must be output cash."
-//            }
-//            transaction {
-//                input { iou }
-//                input { cash }
-//                output { iou.pay(5.DOLLARS) }
-//                output { cashPayment.second }
-//                command(BOB_PUBKEY) { cashPayment.first }
-//                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Settle() }
-//                this.verifies()
-//            }
-//        }
-//    }
+    @Test
+    fun mustBeCashOutputStatesPresent() {
+        val iou = IOUState(10.DOLLARS, ALICE, BOB)
+        val cash = createCashState(5.DOLLARS, BOB)
+        val cashPayment = cash.withNewOwner(newOwner = ALICE)
+        ledger {
+            transaction {
+                input { iou }
+                output { iou.pay(5.DOLLARS) }
+                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Settle() }
+                this `fails with` "There must be output cash."
+            }
+            transaction {
+                input { iou }
+                input { cash }
+                output { iou.pay(5.DOLLARS) }
+                output { cashPayment.second }
+                command(BOB_PUBKEY) { cashPayment.first }
+                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Settle() }
+                this.verifies()
+            }
+        }
+    }
 
     /**
      * Task 5.
-     * Not only to we need to check that [Cash] output states are present but we need to check that the payer is
+     * Not only do we need to check that [Cash] output states are present but we need to check that the payer is
      * correctly assigning us as the new owner of these states.
-     * TODO: Add a constaint to check that we are the new owner of the output cash.
+     * TODO: Add a constraint to check that we are the new owner of the output cash.
      * Hint:
      * - Not all of the cash may be assigned to us as some of the input cash may be sent back to the payer as change.
      * - We need to use the [Cash.State.owner] property to check to see that it is the value of our public key.
      * - Use [filter] to filter over the list of cash states to get the ones which are being assigned to us.
      * - Once we have this filtered list, we can sum the cash being paid to us so we know how much is being settled.
      */
-//    @Test
-//    fun mustBeCashOutputStatesWithRecipientAsOwner() {
-//        val iou = IOUState(10.POUNDS, ALICE, BOB)
-//        val cash = createCashState(5.POUNDS, BOB)
-//        val invalidCashPayment = cash.withNewOwner(newOwner = CHARLIE)
-//        val validCashPayment = cash.withNewOwner(newOwner = ALICE)
-//        ledger {
-//            transaction {
-//                input { iou }
-//                input { cash }
-//                output { iou.pay(5.POUNDS) }
-//                output { invalidCashPayment.second }
-//                command(BOB_PUBKEY) { invalidCashPayment.first }
-//                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Settle() }
-//                this `fails with` "There must be output cash paid to the recipient."
-//            }
-//            transaction {
-//                input { iou }
-//                input { cash }
-//                output { iou.pay(5.POUNDS) }
-//                output { validCashPayment.second }
-//                command(BOB_PUBKEY) { validCashPayment.first }
-//                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Settle() }
-//                this.verifies()
-//            }
-//        }
-//    }
+    @Test
+    fun mustBeCashOutputStatesWithRecipientAsOwner() {
+        val iou = IOUState(10.POUNDS, ALICE, BOB)
+        val cash = createCashState(5.POUNDS, BOB)
+        val invalidCashPayment = cash.withNewOwner(newOwner = CHARLIE)
+        val validCashPayment = cash.withNewOwner(newOwner = ALICE)
+        ledger {
+            transaction {
+                input { iou }
+                input { cash }
+                output { iou.pay(5.POUNDS) }
+                output { invalidCashPayment.second }
+                command(BOB_PUBKEY) { invalidCashPayment.first }
+                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Settle() }
+                this `fails with` "There must be output cash paid to the recipient."
+            }
+            transaction {
+                input { iou }
+                input { cash }
+                output { iou.pay(5.POUNDS) }
+                output { validCashPayment.second }
+                command(BOB_PUBKEY) { validCashPayment.first }
+                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Settle() }
+                this.verifies()
+            }
+        }
+    }
 
     /**
      * Task 6.
@@ -240,41 +240,41 @@ class IOUSettleTests {
      * - We can compare the amount left paid to the amount being paid to use, ensuring the amount being paid isn't too
      *   much.
      */
-//    @Test
-//    fun cashSettlementAmountMustBeLessThanRemainingIOUAmount() {
-//        val iou = IOUState(10.DOLLARS, ALICE, BOB)
-//        val elevenDollars = createCashState(11.DOLLARS, BOB)
-//        val tenDollars = createCashState(10.DOLLARS, BOB)
-//        val fiveDollars = createCashState(5.DOLLARS, BOB)
-//        ledger {
-//            transaction {
-//                input { iou }
-//                input { elevenDollars }
-//                output { iou.pay(11.DOLLARS) }
-//                output { elevenDollars.withNewOwner(newOwner = ALICE).second }
-//                command(BOB_PUBKEY) { elevenDollars.withNewOwner(newOwner = ALICE).first }
-//                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Settle() }
-//                this `fails with` "The amount settled cannot be more than the amount outstanding."
-//            }
-//            transaction {
-//                input { iou }
-//                input { fiveDollars }
-//                output { iou.pay(5.DOLLARS) }
-//                output { fiveDollars.withNewOwner(newOwner = ALICE).second }
-//                command(BOB_PUBKEY) { fiveDollars.withNewOwner(newOwner = ALICE).first }
-//                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Settle() }
-//                this.verifies()
-//            }
-//            transaction {
-//                input { iou }
-//                input { tenDollars }
-//                output { tenDollars.withNewOwner(newOwner = ALICE).second }
-//                command(BOB_PUBKEY) { tenDollars.withNewOwner(newOwner = ALICE).first }
-//                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Settle() }
-//                this.verifies()
-//            }
-//        }
-//    }
+    @Test
+    fun cashSettlementAmountMustBeLessThanRemainingIOUAmount() {
+        val iou = IOUState(10.DOLLARS, ALICE, BOB)
+        val elevenDollars = createCashState(11.DOLLARS, BOB)
+        val tenDollars = createCashState(10.DOLLARS, BOB)
+        val fiveDollars = createCashState(5.DOLLARS, BOB)
+        ledger {
+            transaction {
+                input { iou }
+                input { elevenDollars }
+                output { iou.pay(11.DOLLARS) }
+                output { elevenDollars.withNewOwner(newOwner = ALICE).second }
+                command(BOB_PUBKEY) { elevenDollars.withNewOwner(newOwner = ALICE).first }
+                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Settle() }
+                this `fails with` "The amount settled cannot be more than the amount outstanding."
+            }
+            transaction {
+                input { iou }
+                input { fiveDollars }
+                output { iou.pay(5.DOLLARS) }
+                output { fiveDollars.withNewOwner(newOwner = ALICE).second }
+                command(BOB_PUBKEY) { fiveDollars.withNewOwner(newOwner = ALICE).first }
+                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Settle() }
+                this.verifies()
+            }
+            transaction {
+                input { iou }
+                input { tenDollars }
+                output { tenDollars.withNewOwner(newOwner = ALICE).second }
+                command(BOB_PUBKEY) { tenDollars.withNewOwner(newOwner = ALICE).first }
+                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Settle() }
+                this.verifies()
+            }
+        }
+    }
 
     /**
      * Task 7.
@@ -282,30 +282,30 @@ class IOUSettleTests {
      * in the currency that the IOU in denominated in.
      * TODO: You shouldn't have anything to do here but here are some tests just to make sure!
      */
-//    @Test
-//    fun cashSettlementMustBeInTheCorrectCurrency() {
-//        val iou = IOUState(10.DOLLARS, ALICE, BOB)
-//        val tenDollars = createCashState(10.DOLLARS, BOB)
-//        val tenPounds = createCashState(10.POUNDS, BOB)
-//        ledger {
-//            transaction {
-//                input { iou }
-//                input { tenPounds }
-//                output { tenPounds.withNewOwner(newOwner = ALICE).second }
-//                command(BOB_PUBKEY) { tenPounds.withNewOwner(newOwner = ALICE).first }
-//                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Settle() }
-//                this `fails with` "Token mismatch: GBP vs USD"
-//            }
-//            transaction {
-//                input { iou }
-//                input { tenDollars }
-//                output { tenDollars.withNewOwner(newOwner = ALICE).second }
-//                command(BOB_PUBKEY) { tenDollars.withNewOwner(newOwner = ALICE).first }
-//                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Settle() }
-//                this.verifies()
-//            }
-//        }
-//    }
+    @Test
+    fun cashSettlementMustBeInTheCorrectCurrency() {
+        val iou = IOUState(10.DOLLARS, ALICE, BOB)
+        val tenDollars = createCashState(10.DOLLARS, BOB)
+        val tenPounds = createCashState(10.POUNDS, BOB)
+        ledger {
+            transaction {
+                input { iou }
+                input { tenPounds }
+                output { tenPounds.withNewOwner(newOwner = ALICE).second }
+                command(BOB_PUBKEY) { tenPounds.withNewOwner(newOwner = ALICE).first }
+                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Settle() }
+                this `fails with` "Token mismatch: GBP vs USD"
+            }
+            transaction {
+                input { iou }
+                input { tenDollars }
+                output { tenDollars.withNewOwner(newOwner = ALICE).second }
+                command(BOB_PUBKEY) { tenDollars.withNewOwner(newOwner = ALICE).first }
+                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Settle() }
+                this.verifies()
+            }
+        }
+    }
 
     /**
      * Task 8.
